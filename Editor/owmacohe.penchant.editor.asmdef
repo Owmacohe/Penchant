@@ -1,0 +1,18 @@
+{
+    "name": "owmacohe.penchant.editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:86ba25b2a6f29374aa9af5ba43549fe3"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

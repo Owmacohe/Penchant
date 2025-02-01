@@ -1,0 +1,162 @@
+﻿using System;
+using System.Linq;
+using UnityEngine;
+
+namespace Penchant.Runtime
+{
+    /// <summary>
+    /// A class used to generate seeded random numbers and values
+    /// </summary>
+    [Serializable]
+    public class SeededRandom
+    {
+        /// <summary>
+        /// The seed used to generate consistent sequences of random numbers
+        /// </summary>
+        public string Seed
+        {
+            get => _seed;
+            set
+            {
+                // We need to ensure that the seed is at least 10 characters long
+                // If the seed is too short, its outputs are too similar
+                _seed = value.Trim().PadLeft(10, '_');
+                Reset();
+            }
+        }
+
+        string _seed;
+        
+        /// <summary>
+        /// The number of times that a random value has been called
+        /// </summary>
+        internal int Calls;
+        
+        public SeededRandom(string seed = "")
+        {
+            Seed = seed;
+        }
+        
+        /// <summary>
+        /// A random float value between [0..1)
+        /// </summary>
+        public SeededRandomValue RandomValue
+        {
+            get
+            {
+                // We use String.GetHashCode to get the unique code for this particular seed
+                // We also append the number of calls to the end of the seed so that the resulting value changes each time that a new random value is called
+                // The number of calls needs to be multiplied by 1 trillion so that it actually has an impact on the hash code
+                // We then divide it by 4.3 billion to get it down to a normalized amount, and add 0.5 to make sure it's not negative
+                float randomValue = (_seed + (Calls++ * 1_000_000_000_000)).GetHashCode() / 4_300_000_000f + 0.5f;
+                return (SeededRandomValue)randomValue;
+            }
+        }
+
+        /// <summary>
+        /// A random float value between two bounds
+        /// </summary>
+        /// <param name="min">The minimum bound (inclusive)</param>
+        /// <param name="max">The maximum bound (exclusive)</param>
+        public float RandomRange(float min, float max) => min + (RandomValue * (max - min));
+        
+        /// <summary>
+        /// A random float value between two bounds
+        /// </summary>
+        /// <param name="min">The minimum bound (inclusive)</param>
+        /// <param name="max">The maximum bound (exclusive)</param>
+        public float RandomRange(float min, int max) => RandomRange(min, (float)max);
+        
+        /// <summary>
+        /// A random float value between two bounds
+        /// </summary>
+        /// <param name="min">The minimum bound (inclusive)</param>
+        /// <param name="max">The maximum bound (exclusive)</param>
+        public float RandomRange(int min, float max) => RandomRange((float)min, max);
+        
+        /// <summary>
+        /// A random integer value between two bounds
+        /// </summary>
+        /// <param name="min">The minimum bound (inclusive)</param>
+        /// <param name="max">The maximum bound (exclusive)</param>
+        public int RandomRange(int min, int max) => (int)RandomRange((float)min, (float)max + 1);
+
+        /// <summary>
+        /// A random Vector2 value between [0..1), [0..1)
+        /// </summary>
+        public Vector2 RandomVector2 => new(RandomValue, RandomValue);
+        
+        /// <summary>
+        /// A random Vector3 value between [0..1), [0..1), [0..1)
+        /// </summary>
+        public Vector3 RandomVector3 => new(RandomValue, RandomValue, RandomValue);
+
+        /// <summary>
+        /// A random Quaternion value between [0..1), [0..1), [0..1)
+        /// </summary>
+        public Quaternion RandomRotation => Quaternion.Euler(RandomVector3);
+
+        /// <summary>
+        /// A tester method to run many iterations upon a seed to determine its upper and lower bounds
+        /// Generally used to validate that the system is in fact running correctly and is returning values between [0..1)
+        /// </summary>
+        /// <param name="iterations"></param>
+        public void TestRandom(int iterations = 1_000_000)
+        {
+            float max = 0;
+            float min = 0;
+
+            for (int i = 0; i < iterations; i++)
+            {
+                var rand = RandomValue;
+                
+                if (rand > max) max = rand;
+                if (rand < min) min = rand;
+            }
+            
+            Debug.Log($"Seed: {_seed} | Iterations: {iterations} | Minimum: {max} | Maximum: {max}");
+        }
+
+        /// <summary>
+        /// Resets the total number of calls to the random value
+        /// Generally used when swapping seeds mid-game
+        /// </summary>
+        public void Reset()
+        {
+            Calls = 0;
+        }
+    }
+    
+    /// <summary>
+    /// A random value generated by SeededRandom representing a base value plus any modifications between [0..1)
+    /// </summary>
+    [Serializable]
+    public class SeededRandomValue
+    {
+        /// <summary>
+        /// The base generated random value between [0..1)
+        /// </summary>
+        public float Base;
+        
+        /// <summary>
+        /// Any modifications applied to the base to artifically raise or lower it
+        /// </summary>
+        public float Modification;
+        
+        /// <summary>
+        /// The calculated value
+        /// </summary>
+        public float Value => Base + Modification;
+
+        public SeededRandomValue(float _base, float _modification = 0)
+        {
+            Base = _base;
+            Modification = _modification;
+        }
+        
+        public static implicit operator float(SeededRandomValue value) => value.Value;
+        public static explicit operator SeededRandomValue(float value) => new(value);
+
+        public override string ToString() => Value.ToString();
+    }
+}

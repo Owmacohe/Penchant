@@ -1,0 +1,61 @@
+﻿.root {
+    padding: 20px;
+}
+
+Button {
+    font-size: 15px;
+}
+
+TextField, Slider, SliderInt {
+    align-items: center;
+    justify-content: center;
+    
+    width: 350px;
+}
+
+TextField Label, Slider Label, SliderInt Label {
+    min-width: 110px;
+    
+    font-size: 15px;
+}
+
+TextField TextInput TextElement {
+    padding: 2px;
+    
+    font-size: 15px;
+}
+
+#unity-drag-container {
+    justify-content: center;
+}
+
+.samples_graph {
+    height: 530px;
+    
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    
+    align-items: flex-end;
+    
+    background-color: black;
+}
+
+.samples_bar { flex-grow: 1; }
+
+.samples_bar_base { background-color: blue; }
+.samples_bar_modification { background-color: red; }
+
+.samples_bar Label {
+    width: auto;
+    
+    font-size: 15px;
+}
+
+.random_builder_events {
+    width: 50%;
+}
+
+.flex_column, .flex_row { display: flex; }
+.flex_column { flex-direction: column; }
+.flex_row { flex-direction: row; }

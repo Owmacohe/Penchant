@@ -1,0 +1,20 @@
+{
+  "name": "com.owmacohe.penchant",
+  "displayName": "Penchant",
+  "version": "1.0.0",
+  "description": "",
+  "unity": "",
+  "unityRelease": "",
+  "documentationUrl": "",
+  "dependencies": {
+    
+  },
+  "keywords": [
+    
+  ],
+  "author": {
+    "name": "Owen Hellum",
+    "email": "omch@protonmail.com",
+    "url": "https://omch.tech"
+  }
+}
