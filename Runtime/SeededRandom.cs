@@ -18,9 +18,12 @@ namespace Penchant.Runtime
             get => _seed;
             set
             {
+                string temp = value;
+                if (string.IsNullOrEmpty(temp)) temp = "";
+                
                 // We need to ensure that the seed is at least 10 characters long
                 // If the seed is too short, its outputs are too similar
-                _seed = value.Trim().PadLeft(10, '_');
+                _seed = temp.Trim().PadLeft(10, '_');
                 Reset();
             }
         }

@@ -13,7 +13,7 @@ namespace Penchant.Editor
         
         const int DEFAULT_SAMPLES = 10;
         string currentSeed;
-        int currentSamples;
+        int currentSamples = DEFAULT_SAMPLES;
         
         VisualElement root;
         TextField seed;
@@ -55,7 +55,7 @@ namespace Penchant.Editor
             {
                 currentSeed = evt.newValue;
                 seededRandom.Seed = evt.newValue;
-                Reset();
+                ResetBars();
             });
             
             /* Samples */
@@ -72,7 +72,7 @@ namespace Penchant.Editor
             {
                 currentSamples = evt.newValue;
                 samplesLabel.text = $"Samples ({currentSamples}):";
-                Reset();
+                ResetBars();
             });
 
             Button decreaseSamples = new Button();
@@ -97,7 +97,7 @@ namespace Penchant.Editor
             SetSampleBars(DEFAULT_SAMPLES, samplesGraph);
         }
 
-        void Reset()
+        void ResetBars()
         {
             seededRandom.Reset();
             SetSampleBars(currentSamples, samplesGraph);
