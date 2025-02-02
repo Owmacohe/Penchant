@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using Penchant.Runtime;
+using TMPro;
 using UnityEngine;
 
 public class PenchantExample : MonoBehaviour
 {
+    [Header("Trees")]
     [SerializeField] Transform tree;
     [SerializeField] int size = 10;
+
+    [Header("UI")]
+    [SerializeField] TMP_InputField seedField;
 
     SeededRandom treeRandom;
 
@@ -32,6 +37,13 @@ public class PenchantExample : MonoBehaviour
         GenerateTrees();
     }
 
+    public void RandomizeSeed()
+    {
+        treeRandom = new SeededRandom();
+        seedField.SetTextWithoutNotify(treeRandom.Seed);
+        GenerateTrees();
+    }
+    
     void GenerateTrees()
     {
         foreach (var oldTree in trees)

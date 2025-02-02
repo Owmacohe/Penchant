@@ -6,7 +6,9 @@ namespace Penchant.Editor
 {
     public static class PenchantEditorUtilities
     {
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.0.2";
+        
+        #region VisualElements
         
         /// <summary>
         /// Method to remove the provided element from the hierarchy
@@ -112,6 +114,8 @@ namespace Penchant.Editor
             return lst;
         }
         
+        #endregion
+        
         /// <summary>
         /// Adds a stylesheet to an editor
         /// </summary>
@@ -120,26 +124,33 @@ namespace Penchant.Editor
             // All the possible paths that a stylesheet could be located at
             string[] paths =
             {
-                "Packages/com.owmacohe.penchant/Resources/",
                 "Packages/Penchant-" + VERSION + "/Resources/",
+                "Packages/com.owmacohe.penchant/Resources/",
+                "Packages/Penchant/Resources/",
                 
-                "Assets/com.owmacohe.penchant/Resources/",
                 "Assets/Penchant-" + VERSION + "/Resources/",
-                
                 "Assets/com.owmacohe.penchant/Resources/",
-                "Assets/Packages/Penchant-" + VERSION + "/Resources/"
+                "Assets/Penchant/Resources/",
+                
+                "Assets/Packages/Penchant-" + VERSION + "/Resources/",
+                "Assets/Packages/com.owmacohe.penchant/Resources/",
+                "Assets/Packages/Penchant/Resources/",
+                
+                "Assets/Plugins/Penchant-" + VERSION + "/Resources/",
+                "Assets/Plugins/com.owmacohe.penchant/Resources/",
+                "Assets/Plugins/Penchant/Resources/",
             };
-
-            StyleSheet styleSheet = null;
-
+            
             // Trying all the possible paths and stopping when we find it
             foreach (var i in paths)
             {
-                styleSheet = (StyleSheet)EditorGUIUtility.Load(i + name + ".uss");
-                if (styleSheet != null) break;
+                var styleSheet = (StyleSheet)EditorGUIUtility.Load(i + name + ".uss");
+                if (styleSheet != null)
+                {
+                    styleSheetSet.Add(styleSheet);
+                    return;
+                }
             }
-            
-            if (styleSheet != null) styleSheetSet.Add(styleSheet);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,9 +9,10 @@ namespace Penchant.Runtime
     /// <summary>
     /// A class used to generate seeded random numbers and values
     /// </summary>
-    [Serializable]
     public class SeededRandom
     {
+        readonly int MIN_SEED_SIZE = 10;
+        
         /// <summary>
         /// The seed used to generate consistent sequences of random numbers
         /// </summary>
@@ -23,7 +26,7 @@ namespace Penchant.Runtime
                 
                 // We need to ensure that the seed is at least 10 characters long
                 // If the seed is too short, its outputs are too similar
-                _seed = temp.Trim().PadLeft(10, '_');
+                _seed = temp.Trim().PadLeft(MIN_SEED_SIZE, '_');
                 Reset();
             }
         }
@@ -33,10 +36,28 @@ namespace Penchant.Runtime
         /// <summary>
         /// The number of times that a random value has been called
         /// </summary>
-        internal int Calls;
+        int calls;
         
-        public SeededRandom(string seed = "")
+        /// <summary>
+        /// Parameterized constructor
+        /// </summary>
+        /// <param name="seed">The desired seed to generate random numbers from</param>
+        public SeededRandom(string seed)
         {
+            Seed = seed;
+        }
+
+        /// <summary>
+        /// Random seed constructor (assigns a random seed when the object is created)
+        /// </summary>
+        public SeededRandom()
+        {
+            string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            string seed = "";
+
+            for (int i = 0; i < MIN_SEED_SIZE * 2; i++)
+                seed += chars[UnityEngine.Random.Range(0, chars.Length)];
+
             Seed = seed;
         }
         
@@ -51,10 +72,12 @@ namespace Penchant.Runtime
                 // We also append the number of calls to the end of the seed so that the resulting value changes each time that a new random value is called
                 // The number of calls needs to be multiplied by 1 trillion so that it actually has an impact on the hash code
                 // We then divide it by 4.3 billion to get it down to a normalized amount, and add 0.5 to make sure it's not negative
-                float randomValue = (_seed + (Calls++ * 1_000_000_000_000)).GetHashCode() / 4_300_000_000f + 0.5f;
+                float randomValue = (_seed + (calls++ * 1_000_000_000_000)).GetHashCode() / 4_300_000_000f + 0.5f;
                 return (SeededRandomValue)randomValue;
             }
         }
+        
+        #region RandomRange
 
         /// <summary>
         /// A random float value between two bounds
@@ -82,7 +105,56 @@ namespace Penchant.Runtime
         /// </summary>
         /// <param name="min">The minimum bound (inclusive)</param>
         /// <param name="max">The maximum bound (exclusive)</param>
-        public int RandomRange(int min, int max) => (int)RandomRange((float)min, (float)max + 1);
+        public int RandomRange(int min, int max) => (int)Mathf.Floor(RandomRange((float)min, (float)max));
+        
+        #endregion
+        
+        #region RandomEntry
+
+        /// <summary>
+        /// A random entry from a list
+        /// </summary>
+        /// <param name="list">The list to get the entry from</param>
+        public T RandomEntry<T>(List<T> list) => list[RandomRange(0, list.Count)];
+        
+        /// <summary>
+        /// A random entry from an array
+        /// </summary>
+        /// <param name="array">The array to get the entry from</param>
+        public T RandomEntry<T>(T[] array) => array[RandomRange(0, array.Length)];
+        
+        /// <summary>
+        /// A random entry from a dictionary
+        /// </summary>
+        /// <param name="dictionary">The dictionary to get the entry from</param>
+        public U RandomEntry<T, U>(Dictionary<T, U> dictionary)
+        {
+            var values = dictionary.Values.ToList();
+            return values[RandomRange(0, values.Count)];
+        }
+        
+        /// <summary>
+        /// A random entry from a hashtable
+        /// </summary>
+        /// <param name="hashtable">The hashtable to get the entry from</param>
+        public T RandomEntry<T>(Hashtable hashtable)
+        {
+            var values = hashtable.Values.Cast<T>().ToList();
+            return values[RandomRange(0, values.Count)];
+        }
+        
+        /// <summary>
+        /// A random entry from a collection
+        /// </summary>
+        /// <param name="collection">The collection to get the entry from<</param>
+        /// <typeparam name="T">The collection type</typeparam>
+        /// <typeparam name="U">The entry type</typeparam>
+        public U RandomEntry<T, U>(T collection) where T : ICollection<U> =>
+            collection.ToArray()[RandomRange(0, collection.Count)];
+        
+        #endregion
+        
+        #region RandomVector
 
         /// <summary>
         /// A random Vector2 value between [0..1), [0..1)
@@ -97,7 +169,9 @@ namespace Penchant.Runtime
         /// <summary>
         /// A random Quaternion value between [0..1), [0..1), [0..1)
         /// </summary>
-        public Quaternion RandomRotation => Quaternion.Euler(RandomVector3);
+        public Quaternion RandomQuaternion => Quaternion.Euler(RandomVector3);
+        
+        #endregion
 
         /// <summary>
         /// A tester method to run many iterations upon a seed to determine its upper and lower bounds
@@ -126,7 +200,7 @@ namespace Penchant.Runtime
         /// </summary>
         public void Reset()
         {
-            Calls = 0;
+            calls = 0;
         }
     }
     
@@ -142,7 +216,7 @@ namespace Penchant.Runtime
         public float Base;
         
         /// <summary>
-        /// Any modifications applied to the base to artifically raise or lower it
+        /// Any modifications applied to the base to artificially raise or lower it
         /// </summary>
         public float Modification;
         

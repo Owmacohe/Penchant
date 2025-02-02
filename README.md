@@ -41,8 +41,8 @@ for (int i = 0; i < enemyCount; i++)
     EnemyController enemy = Instantiate(
         enemyPrefab,
         enemySpawnSeededRandom.RandomVector3 * arenaSize,
-        enemySpawnSeededRandom.RandomRotation);
+        enemySpawnSeededRandom.RandomQuaternion);
     
-    enemy.itemDrop = itemDrops[itemDropSeededRandom.RandomRange(0, itemsDrops.Count)];
+    enemy.itemDrop = itemDropSeededRandom.RandomEntry(itemDrops);
 }
 ```
