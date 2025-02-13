@@ -22,7 +22,7 @@ namespace Penchant.Editor
         
         List<VisualElement> sampleBars = new();
         
-        [MenuItem("Window/Penchant/Visualizer"), MenuItem("Penchant/Visualizer")]
+        [MenuItem("Window/Penchant/Visualizer"), MenuItem("Tools/Penchant/Visualizer")]
         public static void Open()
         {
             GetWindow<PenchantVisualizer>("Penchant Visualizer");
@@ -119,13 +119,8 @@ namespace Penchant.Editor
                 bar.AddToClassList("flex_column");
                 parent.Add(bar);
                 
-                Label barModification = new Label();
-                barModification.style.height = new StyleLength(new Length(500f * rand.Modification));
-                barModification.AddToClassList("samples_bar_modification");
-                bar.Add(barModification);
-                
                 Label barBase = new Label();
-                barBase.style.height = new StyleLength(new Length(500f * rand.Base));
+                barBase.style.height = new StyleLength(new Length(500f * rand));
                 barBase.AddToClassList("samples_bar_base");
                 bar.Add(barBase);
 

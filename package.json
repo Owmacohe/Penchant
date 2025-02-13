@@ -1,11 +1,11 @@
 {
   "name": "com.owmacohe.penchant",
   "displayName": "Penchant",
-  "version": "1.0.2",
-  "description": "",
+  "version": "1.0.3",
+  "description": "A simple and elegant seeded random number generator for Unity",
   "unity": "",
   "unityRelease": "",
-  "documentationUrl": "",
+  "documentationUrl": "https://github.com/Owmacohe/Penchant/blob/main/README.md",
   "dependencies": {
     
   },

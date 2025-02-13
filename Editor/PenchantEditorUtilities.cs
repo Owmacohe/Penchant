@@ -6,7 +6,7 @@ namespace Penchant.Editor
 {
     public static class PenchantEditorUtilities
     {
-        public const string VERSION = "1.0.2";
+        public const string VERSION = "1.0.3";
         
         #region VisualElements
         
